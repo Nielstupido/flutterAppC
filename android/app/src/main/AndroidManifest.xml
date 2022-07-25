@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.command.command_app">
+    package="com.commandPaid.command_app">
    <application
-        android:label="Atriarch Command Target (Free)"
+        android:label="Atriarch Command Target (Paid)"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

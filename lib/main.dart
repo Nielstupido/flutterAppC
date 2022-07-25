@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:wakelock/wakelock.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'dart:async';
 
 
 void main() => runApp(const MyApp());
-
 
 class MyApp extends StatelessWidget 
 {
@@ -45,6 +47,8 @@ class _MyHomePageState extends State<MyHomePage>
   String aDescription = "Program A runs constantly until the user stops the program, with a reholster command and countdown between commands. Enter the par time, split time, delay time (min and max), number of shots per iteration, number of rounds, reholster time, and command options.";
   String bDescription = "Program B runs one iteration at a time. User enters all of the same options with the exception of reholster time. The user will push the start button each time they want the program to run.";
 
+  // ignore: prefer_typing_uninitialized_variables
+  bool boolVal = true;
 
   @override
   void initState() 
@@ -52,6 +56,167 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
   }
 
+  Future<bool> fetchData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    final isFirstTimeOpened = prefs.getBool('isFrstOpened') ?? true;
+    final bool valueBool = await Future<bool>.value(isFirstTimeOpened);
+    return (valueBool);
+  }
+
+  @override
+  Widget build(BuildContext context)
+  {
+
+    fetchData().then((value)
+    {
+      setState(() {
+        boolVal = value;
+      });
+    });
+
+    if(boolVal)
+    {
+      return const DiscScreen();
+    }
+    else
+    {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+
+              Container(
+                height: 160.0,
+                width: 240.0,
+                margin: const EdgeInsets.only(bottom: 50),
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                        'assets/homeLogo.png'),
+                    fit: BoxFit.fill,
+                  ),
+                  shape: BoxShape.rectangle,
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      Container(
+                        height: 100,
+                        width: 100,
+                        margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          child: const Text("Program\n A",
+                            style: TextStyle(fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
+                          shape: const BeveledRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))
+                          ),
+                          onPressed: ()
+                          {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const FirstProgram()),
+                            );
+                          }
+                        ), 
+                      ),
+
+                      Container(
+                        width: 130,
+                        margin: const EdgeInsets.fromLTRB(0, 10, 15, 0),
+                        child: Text(aDescription,
+                            style: const TextStyle(fontSize: 13),
+                            textAlign: TextAlign.center
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      Container(
+                        height: 100,
+                        width: 100,
+                        margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          child: const Text("Program\n B",
+                            style: TextStyle(fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
+                          shape: const BeveledRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5))
+                          ),
+                          onPressed: () 
+                          {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SecondProgram()),
+                            );
+                          }
+                        )
+                      ),
+
+
+                      Container(
+                        width: 130,
+                        margin: const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                        child: Text(bDescription,
+                            style: const TextStyle(fontSize: 13),
+                            textAlign: TextAlign.center
+                        ),
+                      )
+
+                    ],
+                  )
+                ],
+              ),
+
+
+            ]
+          )
+        ),
+      );
+    }
+  }
+}
+
+
+
+//Disclaimer1 screen
+class DiscScreen extends StatefulWidget 
+{
+  const DiscScreen({Key? key}) : super(key: key);
+
+  @override
+  State<DiscScreen> createState() => _DisclaimerScreen();
+}
+
+class _DisclaimerScreen extends State<DiscScreen> 
+{
+
+  String verNum = "ver. 1.0.6";
+
+  @override
+  void initState() 
+  {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) 
@@ -60,115 +225,361 @@ class _MyHomePageState extends State<MyHomePage>
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
 
-            Container(
-              height: 160.0,
-              width: 240.0,
-              margin: const EdgeInsets.only(bottom: 50),
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      'assets/homeLogo.png'),
-                  fit: BoxFit.fill,
-                ),
-                shape: BoxShape.rectangle,
-              ),
-            ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-
-                    Container(
-                      height: 100,
-                      width: 100,
-                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: FloatingActionButton(
-                        heroTag: null,
-                        child: const Text("Program\n A",
-                          style: TextStyle(fontSize: 20),
-                          textAlign: TextAlign.center,
-                        ),
-                        shape: const BeveledRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))
-                        ),
-                        onPressed: ()
-                        {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const FirstProgram()),
-                          );
-                        }
-                      ), 
-                    ),
-
-                    Container(
-                      width: 130,
-                      margin: const EdgeInsets.fromLTRB(0, 10, 15, 0),
-                      child: Text(aDescription,
-                          style: const TextStyle(fontSize: 13),
-                          textAlign: TextAlign.center
-                      ),
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.fromLTRB(30, 35, 30, 10),
+                  child: const Text("STOP",
+                    style: TextStyle( color: Colors.red, fontSize: 35, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center)
                 ),
 
+                Container(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+                  child: const Text("Do not begin or continue your dry-fire training/practice until you have completed the following steps and CONFIRMING THAT YOUR FIREARM IS UNLOADED AND THERE IS NO LIVE AMMO IN YOUR TRAINING AREA!",
+                    style: TextStyle( color: Colors.red, fontSize: 18, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center)
+                ),
+                
+                
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
 
-                    Container(
-                      height: 100,
-                      width: 100,
-                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: FloatingActionButton(
-                        heroTag: null,
-                        child: const Text("Program\n B",
-                          style: TextStyle(fontSize: 20),
-                          textAlign: TextAlign.center,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(30, 15, 0, 0),
+                          child: const Text("1.",
+                            textAlign: TextAlign.start)
                         ),
-                        shape: const BeveledRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))
+
+                        const Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 15, 30, 0),
+                            child: 
+                              Text("Unload your firearm by removing the magazine and all/any other ammunition from the firearm.",
+                              textAlign: TextAlign.start),
+                          )
                         ),
-                        onPressed: () 
-                        {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const SecondProgram()),
-                          );
-                        }
-                      )
+                      ],
                     ),
 
 
-                    Container(
-                      width: 130,
-                      margin: const EdgeInsets.fromLTRB(15, 10, 0, 0),
-                      child: Text(bDescription,
-                          style: const TextStyle(fontSize: 13),
-                          textAlign: TextAlign.center
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(30, 10, 0, 0),
+                          child: const Text("2.",
+                            textAlign: TextAlign.start)
+                        ),
+
+                        const Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 10, 30, 0),
+                            child: 
+                              Text("Check and confirm that the chamber of your firearm is empty.",
+                              textAlign: TextAlign.start),
+                          )
+                        ),
+                      ],
+                    ),
+
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(30, 10, 0, 0),
+                          child: const Text("3.",
+                            textAlign: TextAlign.start)
+                        ),
+
+                        const Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 10, 30, 0),
+                            child: 
+                              Text("Remove all live ammunition from the practice area and place it in a secure location where you cannot accidentally or unintentionally load your firearm during your dry fire practice and training.",
+                              textAlign: TextAlign.start),
+                          )
+                        ),
+                      ],
+                    ),
+
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(30, 10, 0, 0),
+                          child: const Text("4.",
+                            textAlign: TextAlign.start)
+                        ),
+
+                        const Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 10, 30, 0),
+                            child: 
+                              Text("Remove all other firearms from your practice area and place them in a secure location where you will not be able to accidentally begin using a loaded firearm.",
+                              textAlign: TextAlign.start),
+                          )
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 90,
+                          margin: const EdgeInsets.fromLTRB(0, 80, 0, 30),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            child: const Text("Continue",
+                              style: TextStyle(fontSize: 15),
+                              textAlign: TextAlign.center,
+                            ),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5))
+                            ),
+                            onPressed: ()
+                            {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const DiscScreenConfirm()),
+                              );
+                            }
+                          ), 
+                        ),
+                      ]
                     )
 
-                  ],
+                  ]
+                ),
+              ]
+            ), 
+
+            const Spacer(flex: 1),
+
+            Align(
+              alignment: FractionalOffset.bottomRight,
+              child: 
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 5, 5),
+                  child:
+                    Text(verNum),
                 )
-              ],
-            ),
-
-
+            )
           ]
         )
       ),
     );
   }
 }
+
+
+//Disclaimer2 screen
+class DiscScreenConfirm extends StatefulWidget 
+{
+  const DiscScreenConfirm({Key? key}) : super(key: key);
+
+  @override
+  State<DiscScreenConfirm> createState() => _DiscScreenConfirmState();
+}
+
+class _DiscScreenConfirmState extends State<DiscScreenConfirm> 
+{
+
+  String verNum = "ver. 1.0.6";
+
+  @override
+  void initState() 
+  {
+    super.initState();
+  }
+
+  Future<void> saveData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFrstOpened', false);
+  }
+
+  @override
+  Widget build(BuildContext context) 
+  {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+
+            Container(
+              padding: const EdgeInsets.fromLTRB(45, 35, 45, 10),
+              child: const Text("By continuing to use the Command Target Shot Timer App you agree and confirm that you:",
+                style: TextStyle( fontStyle: FontStyle.italic),
+                textAlign: TextAlign.start)
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                
+                Container(
+                  padding: const EdgeInsets.fromLTRB(50, 10, 0, 0),
+                  child: const Text("-",
+                    textAlign: TextAlign.start)
+                ),
+
+                const Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(15, 10, 50, 0),
+                    child: 
+                      Text("Have completed the above steps;",
+                      textAlign: TextAlign.start),
+                  )
+                ),
+              ],
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                
+                Container(
+                  padding: const EdgeInsets.fromLTRB(50, 10, 0, 0),
+                  child: const Text("-",
+                    textAlign: TextAlign.start)
+                ),
+
+                const Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(15, 10, 50, 0),
+                    child: 
+                      Text("Will conduct your dry-fire training in a safe and responsible manner;",
+                      textAlign: TextAlign.start),
+                  )
+                ),
+              ],
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                
+                Container(
+                  padding: const EdgeInsets.fromLTRB(50, 10, 0, 0),
+                  child: const Text("-",
+                    textAlign: TextAlign.start)
+                ),
+
+                const Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(15, 10, 50, 0),
+                    child: 
+                      Text("Will NOT point your firearm at any person during your dry-fire practice/training; and,",
+                      textAlign: TextAlign.start),
+                  )
+                ),
+              ],
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                
+                Container(
+                  padding: const EdgeInsets.fromLTRB(50, 10, 0, 0),
+                  child: const Text("-",
+                    textAlign: TextAlign.start)
+                ),
+
+                const Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(15, 10, 50, 0),
+                    child: 
+                      Text("Will not hold Practical Defense Training, Atriarch Training Systems, or any of associates of such, liable for any accidents or injuries that result while using the Command Target Shot Timer App.",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.start),
+                  )
+                ),
+              ],
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 40,
+                  width: 90,
+                  margin: const EdgeInsets.fromLTRB(0, 80, 0, 30),
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    child: const Text("Continue",
+                      style: TextStyle(fontSize: 15),
+                      textAlign: TextAlign.center,
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))
+                    ),
+                    onPressed: ()
+                    {
+                      saveData();
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Flutter Demo Home Page')),
+                      );
+                    }
+                  ), 
+                ),
+              ]
+            ),
+            
+            const Spacer(flex: 1),
+
+            Align(
+              alignment: FractionalOffset.bottomRight,
+              child: 
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 5, 5),
+                  child:
+                    Text(verNum),
+                )
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 
 
@@ -191,7 +602,8 @@ class _FirstProgramState extends State<FirstProgram>
 
   late List<String> pickedSounds;
   late List<String> pickedSoundsBackup;
-  List<String> sounds = ['Circle.mp3', 'Square.mp3', 'Triangle.mp3'];
+  List<String> sounds = ['Blue.mp3', 'Eight.mp3', 'Five.mp3', 'Four.mp3', 'Green.mp3', 'Nine.mp3','One.mp3', 
+  'Purple.mp3', 'Red.mp3', 'Seven.mp3', 'Six.mp3','Three.mp3', 'Two.mp3', 'Yellow.mp3', 'Circle.mp3', 'Square.mp3', 'Triangle.mp3'];
 
   String buttonTitle = "Start";
   bool redB = false;
@@ -212,7 +624,7 @@ class _FirstProgramState extends State<FirstProgram>
   bool square = false;
   bool triangle = false;
 
-  double partTimeController = 1.5;
+  var partTimeController = TextEditingController(text: '0');
 
   bool isSelected5sec = true;
   bool isSeleected10Sec = false;
@@ -225,19 +637,25 @@ class _FirstProgramState extends State<FirstProgram>
   int randomCommandIndex = 0;
   int totalAllowableTimeInt = 0;
   int numOfCommandsToUseInSet = 1;
-  int numOfCommandsInSet = 1;
-  int numOfCommandsInSetBackup = 1;
+  int minNumOfCommands = 1;
+  int maxNumOfCommands = 1;
   String totalAllowTime = "Total Allowable Time";
   double totalAllowableTimeD = 0;
 
 
 
   double delayTimeMinF = 0;
-  double delayTimeMaxF = 0.05;
-  double splitTime = 0.5;
-  double numOfRoundsF = 1;
+  double delayTimeMaxF = 0.5;
+  double parTimeF = 0.0;
+  double splitTime = 0.0;
+  int numOfRoundsF = 0;
+
+  String numOfRounds = '0';
+  
+  String imageLoc = 'assets/icon.png';
 
   AudioPlayer _audioPlayer = AudioPlayer();
+  late OverlayEntry _overlayEntry;
 
   @override
   void initState() 
@@ -246,18 +664,198 @@ class _FirstProgramState extends State<FirstProgram>
     pickedSounds = [];
     pickedSoundsBackup = [];
 
-    setState(() {
-      isSelected = [true, false];
-    });
+    fetchData();
+    
+    _overlayEntry = _createOverlayEntry();
+
+
     super.initState();
+  }
+
+
+  Future<void> saveData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('parTime', parTimeF);
+    await prefs.setDouble('splitTime', splitTime);
+    await prefs.setDouble('delayMin', delayTimeMinF);
+    await prefs.setDouble('delayMax', delayTimeMaxF);
+    await prefs.setInt('numOfCMin', minNumOfCommands);
+    await prefs.setInt('numOfCMax', maxNumOfCommands);
+    await prefs.setInt('numRounds', numOfRoundsF);
+    await prefs.setBool('rTime5sec', isSelected5sec);
+    await prefs.setBool('rTime10sec', isSeleected10Sec);
+
+    await prefs.setBool('red-A', redB);
+    await prefs.setBool('yellow-A', yellowB);
+    await prefs.setBool('blue-A', blueB);
+    await prefs.setBool('green-A', greenB);
+    await prefs.setBool('purple-A', purpleB);
+    await prefs.setBool('one-A', one);
+    await prefs.setBool('two-A', two);
+    await prefs.setBool('three-A', three);
+    await prefs.setBool('four-A', four);
+    await prefs.setBool('five-A', five);
+    await prefs.setBool('six-A', six);
+    await prefs.setBool('seven-A', seven);
+    await prefs.setBool('eight-A', eight);
+    await prefs.setBool('nine-A', nine);
+    await prefs.setBool('circle-A', circle);
+    await prefs.setBool('square-A', square);
+    await prefs.setBool('triangle-A', triangle);
+  }
+
+  Future<void> fetchData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      parTimeF = prefs.getDouble('parTime') ?? 0.0;
+      partTimeController.text = parTimeF.toString();
+      splitTime = prefs.getDouble('splitTime') ?? 0.0;
+      delayTimeMinF = prefs.getDouble('delayMin') ?? 0.0;
+      delayTimeMaxF = prefs.getDouble('delayMax') ?? 0.5;
+      minNumOfCommands = prefs.getInt('numOfCMin') ?? 1;
+      maxNumOfCommands = prefs.getInt('numOfCMax') ?? 1;
+      numOfRoundsF = prefs.getInt('numRounds') ?? 0;
+      numOfRounds = numOfRoundsF.toString();
+      isSelected5sec = prefs.getBool('rTime5sec') ?? true;
+      isSeleected10Sec = prefs.getBool('rTime10sec') ?? false;
+      isSelected[0] = isSelected5sec;
+      isSelected[1] = isSeleected10Sec;
+
+      redB = prefs.getBool('red-A') ?? false;
+      yellowB = prefs.getBool('yellow-A') ?? false;
+      blueB = prefs.getBool('blue-A') ?? false;
+      greenB = prefs.getBool('green-A') ?? false;
+      purpleB = prefs.getBool('purple-A') ?? false;
+      one = prefs.getBool('one-A') ?? false;
+      two = prefs.getBool('two-A') ?? false;
+      three = prefs.getBool('three-A') ?? false;
+      four = prefs.getBool('four-A') ?? false;
+      five = prefs.getBool('five-A') ?? false;
+      six = prefs.getBool('six-A') ?? false;
+      seven = prefs.getBool('seven-A') ?? false;
+      eight = prefs.getBool('eight-A') ?? false;
+      nine = prefs.getBool('nine-A') ?? false;
+      circle = prefs.getBool('circle-A') ?? false;
+      square = prefs.getBool('square-A') ?? false;
+      triangle = prefs.getBool('triangle-A') ?? false;
+    });
+  }
+
+  Future<void> removeData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('parTime', 0);
+    await prefs.setDouble('splitTime', 0.0);
+    await prefs.setDouble('delayMin', 0);
+    await prefs.setDouble('delayMax', 0.5);
+    await prefs.setInt('numOfCMin', 1);
+    await prefs.setInt('numOfCMax', 1);
+    await prefs.setInt('numRounds', 0);
+    await prefs.setBool('rTime5sec', true);
+    await prefs.setBool('rTime10sec', false);
+
+    await prefs.setBool('red-A', false);
+    await prefs.setBool('yellow-A', false);
+    await prefs.setBool('blue-A', false);
+    await prefs.setBool('green-A', false);
+    await prefs.setBool('purple-A', false);
+    await prefs.setBool('one-A', false);
+    await prefs.setBool('two-A', false);
+    await prefs.setBool('three-A', false);
+    await prefs.setBool('four-A', false);
+    await prefs.setBool('five-A', false);
+    await prefs.setBool('six-A', false);
+    await prefs.setBool('seven-A', false);
+    await prefs.setBool('eight-A', false);
+    await prefs.setBool('nine-A', false);
+    await prefs.setBool('circle-A', false);
+    await prefs.setBool('square-A', false);
+    await prefs.setBool('triangle-A', false);
+
+    fetchData();
+  }
+
+
+  Future<void> changeImage(String chosenSoundStr) async
+  {
+    if(chosenSoundStr == 'Blue.mp3')
+    {
+      imageLoc = 'assets/visuals/blue.jpg';
+    }
+    else if(chosenSoundStr == 'Eight.mp3')
+    {
+      imageLoc = 'assets/visuals/eight.jpg';
+    }
+    else if(chosenSoundStr == 'Five.mp3')
+    {
+      imageLoc = 'assets/visuals/five.jpg';
+    }
+    else if(chosenSoundStr == 'Four.mp3')
+    {
+      imageLoc = 'assets/visuals/four.jpg';
+    }
+    else if(chosenSoundStr == 'Green.mp3')
+    {
+      imageLoc = 'assets/visuals/green.jpg';
+    }
+    else if(chosenSoundStr == 'Nine.mp3')
+    {
+      imageLoc = 'assets/visuals/nine.jpg';
+    }
+    else if(chosenSoundStr == 'One.mp3')
+    {
+      imageLoc = 'assets/visuals/one.jpg';
+    }
+    else if(chosenSoundStr == 'Purple.mp3')
+    {
+      imageLoc = 'assets/visuals/purple.jpg';
+    }
+    else if(chosenSoundStr == 'Red.mp3')
+    {
+      imageLoc = 'assets/visuals/red.jpg';
+    }
+    else if(chosenSoundStr == 'Seven.mp3')
+    {
+      imageLoc = 'assets/visuals/seven.jpg';
+    }
+    else if(chosenSoundStr == 'Six.mp3')
+    {
+      imageLoc = 'assets/visuals/six.jpg';
+    }
+    else if(chosenSoundStr == 'Three.mp3')
+    {
+      imageLoc = 'assets/visuals/three.jpg';
+    }
+    else if(chosenSoundStr == 'Two.mp3')
+    {
+      imageLoc = 'assets/visuals/two.jpg';
+    }
+    else if(chosenSoundStr == 'Yellow.mp3')
+    {
+      imageLoc = 'assets/visuals/yellow.jpg';
+    }
+    else if(chosenSoundStr == 'Circle.mp3')
+    {
+      imageLoc = 'assets/visuals/circle.png';
+    }
+    else if(chosenSoundStr == 'Square.mp3')
+    {
+      imageLoc = 'assets/visuals/square.jpg';
+    }
+    else if(chosenSoundStr == 'Triangle.mp3')
+    {
+      imageLoc = 'assets/visuals/triangle.png';
+    }
   }
 
 
   void start() 
   {
     totalAllowableTimeInt = calculateAT();
-    numOfCommandsToUseInSet = numOfCommandsInSet;
-    numOfCommandsInSetBackup = numOfCommandsInSet;
+    numOfCommandsToUseInSet = randomNumOfCommands();
 
     initialiseSoundList();
 
@@ -356,6 +954,11 @@ class _FirstProgramState extends State<FirstProgram>
   }
 
 
+  int randomNumOfCommands()
+  {
+    return minNumOfCommands + random.nextInt((maxNumOfCommands + 1) - minNumOfCommands);
+  }
+
   void startLogic()
   {
     delayTimeMinF = double.parse((delayTimeMinF).toStringAsFixed(1));
@@ -385,7 +988,7 @@ class _FirstProgramState extends State<FirstProgram>
       randomCommandIndex = random.nextInt((pickedSounds.length-1));
     }
     _audioPlayer.setAsset('assets/audio/'+ pickedSounds[randomCommandIndex]);
-
+    changeImage(pickedSounds[randomCommandIndex]);
     secondsDelay = minT + random.nextInt(maxT - minT);
 
     Future.delayed(Duration(milliseconds: secondsDelay), () 
@@ -397,6 +1000,7 @@ class _FirstProgramState extends State<FirstProgram>
   
   void playSound() 
   {
+    Overlay.of(context)?.insert(_overlayEntry);
     _audioPlayer.play();
     numOfCommandsToUseInSet--;
     delay1();
@@ -410,6 +1014,7 @@ class _FirstProgramState extends State<FirstProgram>
       _audioPlayer.dispose();
       _audioPlayer = AudioPlayer();
       _audioPlayer.setAsset('assets/audio/Beep.mp3');
+      _overlayEntry.remove();
       playBuzzer();
     });
   }
@@ -442,13 +1047,12 @@ class _FirstProgramState extends State<FirstProgram>
             randomCommandIndex = random.nextInt((pickedSounds.length-1));
           }
           _audioPlayer.setAsset('assets/audio/'+ pickedSounds[randomCommandIndex]);
-
+          changeImage(pickedSounds[randomCommandIndex]);
           playSound();
-
         }
         else
         {
-          numOfCommandsToUseInSet = numOfCommandsInSetBackup;
+          numOfCommandsToUseInSet = randomNumOfCommands();
           _audioPlayer.setAsset('assets/audio/Reholster.mp3');
           delay2();
         }
@@ -506,7 +1110,7 @@ class _FirstProgramState extends State<FirstProgram>
 
   int calculateAT()
   {
-    totalAllowableTimeD = ((numOfRoundsF - 1.0) * splitTime) + partTimeController;
+    totalAllowableTimeD = ((numOfRoundsF.toDouble() - 1.0) * splitTime) + double.parse(partTimeController.text);
 
     return int.parse(totalAllowableTimeD.toStringAsFixed(2).replaceAll(".", "") + "0");
   }
@@ -514,9 +1118,85 @@ class _FirstProgramState extends State<FirstProgram>
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    //_audioPlayer.dispose();
+    _overlayEntry.remove();
     super.dispose();
   }
+
+
+
+
+  Widget _incrementButton() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        splitTime += 0.05;
+        setState(() {
+          splitTime = double.parse((splitTime).toStringAsFixed(2));
+        });
+      },
+    );
+  }
+
+
+  Widget _decrementButton() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(splitTime > 0)
+          {
+            splitTime -= 0.05;
+            splitTime = double.parse((splitTime).toStringAsFixed(2));
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+
+
+
+  Widget _incrementButtonParTime() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        parTimeF = double.parse(partTimeController.text);
+        parTimeF += 0.05;
+        parTimeF = double.parse((parTimeF).toStringAsFixed(2));
+        setState(() {
+          partTimeController.text = parTimeF.toString();
+        });
+      },
+    );
+  }
+
+
+  Widget _decrementButtonParTime() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        parTimeF = double.parse(partTimeController.text);
+        if(parTimeF > 0)
+        {
+          parTimeF -= 0.05;
+          parTimeF = double.parse((parTimeF).toStringAsFixed(2));
+        }
+        setState(() {
+          partTimeController.text = parTimeF.toString();
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
 
 
   Widget _incrementButtonDelayMin() {
@@ -526,8 +1206,13 @@ class _FirstProgramState extends State<FirstProgram>
       backgroundColor: Colors.white,
       onPressed: () {
         delayTimeMinF += 0.25;
+        if((delayTimeMinF + 0.5) > delayTimeMaxF)
+        {
+          delayTimeMaxF = delayTimeMinF + 0.5;
+        }
         setState(() {
           delayTimeMinF = double.parse((delayTimeMinF).toStringAsFixed(2));
+          delayTimeMaxF = double.parse((delayTimeMaxF).toStringAsFixed(2));
         });
       },
     );
@@ -569,7 +1254,7 @@ class _FirstProgramState extends State<FirstProgram>
       heroTag: null,
       onPressed: () {
         setState(() {
-          if(delayTimeMaxF > 0.05)
+          if((delayTimeMaxF - 0.25) >= (delayTimeMinF + 0.5))
           {
             delayTimeMaxF -= 0.25;
             delayTimeMaxF = double.parse((delayTimeMaxF).toStringAsFixed(2));
@@ -581,9 +1266,126 @@ class _FirstProgramState extends State<FirstProgram>
   }
 
 
+
+
+  Widget _incrementButtonNumRounds() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        setState(() {
+          if(numOfRoundsF < 4)
+          {
+            numOfRoundsF += 1;
+            numOfRounds = numOfRoundsF.toString();
+          }
+        });
+      },
+    );
+  }
+
+
+  Widget _decrementButtonNumRounds() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(numOfRoundsF > 1)
+          {
+            numOfRoundsF -= 1;
+            numOfRounds = numOfRoundsF.toString();
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+  Widget _incrementButtonNumCommandsMin() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        setState(() {
+          if(minNumOfCommands < maxNumOfCommands)
+          {
+            minNumOfCommands += 1;
+          }
+        });
+      },
+    );
+  }
+
+  Widget _decrementButtonNumCommandsMin() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(minNumOfCommands > 1)
+          {
+            minNumOfCommands -= 1;
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+  Widget _incrementButtonNumCommandsMax() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        setState(() {
+          maxNumOfCommands += 1;
+        });
+      },
+    );
+  }
+
+  Widget _decrementButtonNumCommandsMax() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(maxNumOfCommands > minNumOfCommands)
+          {
+            maxNumOfCommands -= 1;
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+
+  OverlayEntry _createOverlayEntry() {
+
+    return OverlayEntry(
+      builder: (context) => Positioned.fill(
+        //bottom: MediaQuery.of(context).size.height/2,
+        //start: (MediaQuery.of(context).size.width/2) - 10,
+        left: 5,
+        top: 5,
+        bottom: 5,
+        right: 5,
+        child: Image.asset(imageLoc),
+      )
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) 
   {
+    Wakelock.enable();
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -605,11 +1407,13 @@ class _FirstProgramState extends State<FirstProgram>
                         child: const Text("Back",
                           style: TextStyle(fontSize: 15),
                         ),
-                        shape: const BeveledRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5))
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5))
                         ),
                         onPressed: ()
                         {
+                          saveData();
+                          _audioPlayer.dispose();
                           Navigator.pop(context);
                         }
                       ), 
@@ -632,197 +1436,400 @@ class _FirstProgramState extends State<FirstProgram>
                 ),
               ),
 
+
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 30,
+                      width: 120,
+                      child: FloatingActionButton(
+                        heroTag: null,
+                        child: const Text("Reset Input Data",
+                          style: TextStyle(fontSize: 10, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))
+                        ),
+                        backgroundColor: Colors.blue,
+                        onPressed: ()
+                        {
+                          removeData();
+                        }
+                      ), 
+                    ),
+                  ]
+                )
+              ),
+
               
 
 
               Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 10, 0),
+                padding: const EdgeInsets.fromLTRB(0, 30.0, 0, 0),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
 
-                    const Flexible(
-                      child: Text("Par Time:"),
-                    ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(15, 0, 0, 10),
+                      child: Row(      
+                              children: <Widget>[
 
-                    Row(                           
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            height: 43.0,
-                            width: 55.0,
-                            margin: const EdgeInsets.fromLTRB(5, 0, 25, 0),
-                            decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                            child: const Text("1.5", 
-                              style: TextStyle(fontSize: 18.0),
-                            )
-                          ),                      
-                        ],
-                      ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text("Par Time:"),
+                                    
+                                    Container(
+                                      alignment: Alignment.center,
+                                      height: 43.0,
+                                      width: 55.0,
+                                      margin: const EdgeInsets.fromLTRB(14, 5, 15, 0),
+                                      decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                      child:TextField(
+                                        textAlign: TextAlign.center,
+                                        textAlignVertical: TextAlignVertical.center,
+                                        controller: partTimeController,
+                                        style: const TextStyle(fontSize: 18.0),
+                                      )
+                                    ),
+                                  ],
+                                ),
 
+                                Column(
+                                  children: <Widget> [
+                                    Container(
+                                      height: 35,
+                                      width: 35,
+                                      margin: const EdgeInsets.only(bottom: 2.0),
+                                      child: _incrementButtonParTime(),
+                                    ),
 
-
-                    const Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child:Text("Split Time:"),
-                      ),
-                    ),
-                    
-
-                    Row(                           
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                          decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child:const Text(
-                            "0.5",
-                            style: TextStyle(fontSize: 18.0),
-                          )
-                         ),
-                      ],
-                    ),
-
-
-
-                  ],
-                ),
-              ),
-
-
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 2, 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Text("Delay"),
-                          Text("Time:"),
-                        ],
-                      )
-                    ),
-
-                        Container(
-                          width: 60.0,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child:Text(
-                            '$delayTimeMinF',
-                            style: const TextStyle(fontSize: 18.0),
-                          )
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-                          child:const Text(" (Min)",
-                            style: TextStyle(fontSize: 12.0),
-                          )
-                        ),
-                    
-                        Column(
-                          children: <Widget> [
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(bottom: 2.0),
-                              child: _incrementButtonDelayMin(),
+                                    Container(
+                                      height: 35,
+                                      width: 35,
+                                      margin: const EdgeInsets.only(top: 2.0),
+                                      child: _decrementButtonParTime(),
+                                    ),
+                                  ]
+                                ),
+                              
+                              ],
                             ),
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(top: 2.0),
-                              child: _decrementButtonDelayMin(),
-                            ),
-                          ]
-                        ),
-
-
-                        Container(
-                          width: 60.0,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(30, 0, 5, 0),
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child:Text(
-                            '$delayTimeMaxF',
-                            style: const TextStyle(fontSize: 18.0),
-                          )
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-                          child:const Text(" (Max)",
-                            style: TextStyle(fontSize: 12.0),
-                          )
-                        ),
-                    
-                        Column(
-                          children: <Widget> [
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(bottom: 2.0),
-                              child: _incrementButtonDelayMax(),
-                            ),
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(top: 2.0),
-                              child: _decrementButtonDelayMax(),
-                            ),
-                          ]
-                        ),
-
-
-                  ],
-                ),
-              ),
-
-
-
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 40, 0),
-                child: Row(
-                  children: <Widget>[
-
-                    const Flexible(
-                      child: Text("Number of Commands(Per Set):"),
+                          
                     ),
+
                     
 
                     Container(
-                      width: 55.0,
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                      padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: const Text(
-                        "1",
-                        style: TextStyle(fontSize: 18.0),
-                      )
+                      margin: const EdgeInsets.fromLTRB(30, 0, 0, 10),
+                      child: Row(                           
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text("Split Time:"),
+
+                                  Container(
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                                    padding: const EdgeInsets.fromLTRB(15, 10, 20, 10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$splitTime',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+                              
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButton(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButton(),
+                                  ),
+                                ]
+                              ),
+                            ],
+                          ),
                     ),
+                  
                   ],
                 ),
               ),
 
 
+              Container(
+                margin: const EdgeInsets.fromLTRB(30, 30, 0, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Container(
+                      padding: const EdgeInsets.only(left: 74),
+                      child: const Text("Delay Time:"),
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                    child:const Text(" (Min)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$delayTimeMinF',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+
+
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonDelayMin(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonDelayMin(),
+                                  ),
+                                ]
+                              ),
+
+
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(23, 0, 5, 0),
+                                    child:const Text(" (Max)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(30, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$delayTimeMaxF',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonDelayMax(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonDelayMax(),
+                                  ),
+                                ]
+                              ),
+
+
+                        ],
+                      ),
+                    ),
+
+
+                  ]
+                ),
+              ),
+
 
 
               Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 40, 0),
+                margin: const EdgeInsets.fromLTRB(30, 30, 0, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Container(
+                      padding: const EdgeInsets.only(left: 38),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const[
+                          Text("Number of Commands"),
+                          Text("(Per Set)"),
+                        ],
+                      )
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                    child:const Text(" (Min)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$minNumOfCommands',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+
+
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonNumCommandsMin(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonNumCommandsMin(),
+                                  ),
+                                ]
+                              ),
+
+
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(23, 0, 5, 0),
+                                    child:const Text(" (Max)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(30, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$maxNumOfCommands',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonNumCommandsMax(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonNumCommandsMax(),
+                                  ),
+                                ]
+                              ),
+
+
+                        ],
+                      ),
+                    ),
+
+
+                  ]
+                ),
+              ),
+
+
+
+              Container(
+                padding: const EdgeInsets.fromLTRB(30, 30.0, 40, 0),
                 child: Row(
                   children: <Widget>[
 
@@ -837,11 +1844,30 @@ class _FirstProgramState extends State<FirstProgram>
                       margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
                       padding: const EdgeInsets.all(10),
                       decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child:const Text(
-                        "1",
-                        style: TextStyle(fontSize: 18.0),
+                      child:Text(
+                        numOfRounds,
+                        style: const TextStyle(fontSize: 18.0),
                       )
                     ),
+
+                    Column(
+                      children: <Widget> [
+                        Container(
+                          height: 35,
+                          width: 35,
+                          margin: const EdgeInsets.only(bottom: 2.0),
+                          child: _incrementButtonNumRounds(),
+                        ),
+
+                        Container(
+                          height: 35,
+                          width: 35,
+                          margin: const EdgeInsets.only(top: 2.0),
+                          child: _decrementButtonNumRounds(),
+                        ),
+                      ]
+                    ),
+
                   ],
                 ),
               ),
@@ -934,14 +1960,11 @@ class _FirstProgramState extends State<FirstProgram>
                               value: redB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  redB = redB;
+                                  redB = !redB;
                                 });
                               },
                             ),
-                            const Text("Red",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Red")
                           ],),
 
                         Row(
@@ -950,14 +1973,11 @@ class _FirstProgramState extends State<FirstProgram>
                               value: yellowB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  yellowB = yellowB;
+                                  yellowB = !yellowB;
                                 });
                               },
                             ),
-                            const Text("Yellow",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Yellow")
                           ],),
 
                         Row(
@@ -966,14 +1986,11 @@ class _FirstProgramState extends State<FirstProgram>
                               value: blueB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  blueB = blueB;
+                                  blueB = !blueB;
                                 });
                               },
                             ),
-                            const Text("Blue",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Blue")
                           ],),
 
                         Row(
@@ -982,15 +1999,11 @@ class _FirstProgramState extends State<FirstProgram>
                               value: greenB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  greenB = greenB;
+                                  greenB = !greenB;
                                 });
                               },
                             ),
-                            const Text("Green",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),
-                            ),
+                            const Text("Green")
                           ],),
 
                         Row(
@@ -999,14 +2012,11 @@ class _FirstProgramState extends State<FirstProgram>
                               value: purpleB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  purpleB = purpleB;
+                                  purpleB = !purpleB;
                                 });
                               },
                             ),
-                            const Text("Purple",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Purple")
                           ],),
                         
                       ]
@@ -1025,14 +2035,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: one, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    one = one;
+                                    one = !one;
                                   });
                                 },
                               ),
-                              const Text("1",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("1")
                             ],)
                         ),
 
@@ -1044,14 +2051,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: two, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    two = two;
+                                    two = !two;
                                   });
                                 },
                               ),
-                              const Text("2",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("2")
                             ],)
                         ),
 
@@ -1063,14 +2067,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: three, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    three = three;
+                                    three = !three;
                                   });
                                 },
                               ),
-                              const Text("3",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("3")
                             ],)
                         ),
 
@@ -1082,14 +2083,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: four, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    four = four;
+                                    four = !four;
                                   });
                                 },
                               ),
-                              const Text("4",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("4")
                             ],)
                         ),
 
@@ -1101,14 +2099,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: five, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    five = five;
+                                    five = !five;
                                   });
                                 },
                               ),
-                              const Text("5",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("5")
                             ],)
                         ),
                         
@@ -1127,14 +2122,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: six, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    six = six;
+                                    six = !six;
                                   });
                                 },
                               ),
-                              const Text("6",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("6")
                             ],)
                         ),
 
@@ -1146,14 +2138,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: seven, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    seven = seven;
+                                    seven = !seven;
                                   });
                                 },
                               ),
-                              const Text("7",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("7")
                             ],)
                         ),
 
@@ -1165,14 +2154,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: eight, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    eight = eight;
+                                    eight = !eight;
                                   });
                                 },
                               ),
-                              const Text("8",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("8")
                             ],)
                         ),
 
@@ -1184,14 +2170,11 @@ class _FirstProgramState extends State<FirstProgram>
                                 value: nine, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    nine = nine;
+                                    nine = !nine;
                                   });
                                 },
                               ),
-                              const Text("9",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("9")
                             ],)
                         ),
 
@@ -1266,6 +2249,7 @@ class _FirstProgramState extends State<FirstProgram>
                   onPressed: (() {
                     if(delayTimeMinF != delayTimeMaxF)
                     {
+                      saveData();
                       start();
                     }
                   }),
@@ -1320,7 +2304,8 @@ class _SecondProgramState extends State<SecondProgram>
 
   late List<String> pickedSounds;
   late List<String> pickedSoundsBackup;
-  List<String> sounds = ['Circle.mp3', 'Square.mp3', 'Triangle.mp3'];
+  List<String> sounds = ['Blue.mp3', 'Eight.mp3', 'Five.mp3', 'Four.mp3', 'Green.mp3', 'Nine.mp3','One.mp3', 
+  'Purple.mp3', 'Red.mp3', 'Seven.mp3', 'Six.mp3','Three.mp3', 'Two.mp3', 'Yellow.mp3', 'Circle.mp3', 'Square.mp3', 'Triangle.mp3'];
 
   String buttonTitle = "GO";
   bool redB = false;
@@ -1341,7 +2326,7 @@ class _SecondProgramState extends State<SecondProgram>
   bool square = false;
   bool triangle = false;
 
-  double partTimeController = 1.5;
+  var partTimeController = TextEditingController(text: '0');
 
   var random = Random();
   int min = 0;
@@ -1351,6 +2336,8 @@ class _SecondProgramState extends State<SecondProgram>
   int totalAllowableTimeInt = 0;
   int numOfCommandsInSet = 1;
   int numOfCommandsToUseInSet = 1;
+  int maxNumOfCommands = 1;
+  int minNumOfCommands = 1;
   String totalAllowTime = "Total Allowable Time";
   double totalAllowableTimeD = 0;
 
@@ -1359,11 +2346,23 @@ class _SecondProgramState extends State<SecondProgram>
   double delayTimeMinF = 0;
   double delayTimeMaxF = 0.05;
   double parTimeF = 0.0;
-  double splitTime = 0.5;
-  double numOfRoundsF = 1.0;
+  double splitTime = 0.0;
+  int numOfRoundsF = 0;
 
+  String numOfRounds = '0';
+
+  String imageLoc = 'assets/icon.png';
+
+
+
+  //free app
+  int minDelay = 4000;
+  int maxDelay = 8000;
+  double parTime = 1.5;
 
   AudioPlayer _audioPlayer = AudioPlayer();
+  late OverlayEntry _overlayEntry;
+
 
   @override
   void initState() 
@@ -1372,10 +2371,182 @@ class _SecondProgramState extends State<SecondProgram>
     pickedSounds = [];
     pickedSoundsBackup = [];
 
-    setState(() {
-      isSelected = [true, false];
-    });
+    fetchData();
+
+    _overlayEntry = _createOverlayEntry();
+    
     super.initState();
+  }
+
+
+  Future<void> saveData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('parTimeB', parTimeF);
+    await prefs.setDouble('splitTimeB', splitTime);
+    await prefs.setDouble('delayMinB', delayTimeMinF);
+    await prefs.setDouble('delayMaxB', delayTimeMaxF);
+    await prefs.setInt('numOfCMinB', minNumOfCommands);
+    await prefs.setInt('numOfCMaxB', maxNumOfCommands);
+    await prefs.setInt('numRoundsB', numOfRoundsF);
+
+    await prefs.setBool('red-B', redB);
+    await prefs.setBool('yellow-B', yellowB);
+    await prefs.setBool('blue-B', blueB);
+    await prefs.setBool('green-B', greenB);
+    await prefs.setBool('purple-B', purpleB);
+    await prefs.setBool('one-B', one);
+    await prefs.setBool('two-B', two);
+    await prefs.setBool('three-B', three);
+    await prefs.setBool('four-B', four);
+    await prefs.setBool('five-B', five);
+    await prefs.setBool('six-B', six);
+    await prefs.setBool('seven-B', seven);
+    await prefs.setBool('eight-B', eight);
+    await prefs.setBool('nine-B', nine);
+    await prefs.setBool('circle-B', circle);
+    await prefs.setBool('square-B', square);
+    await prefs.setBool('triangle-B', triangle);
+  }
+
+  Future<void> fetchData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      parTimeF = prefs.getDouble('parTimeB') ?? 0.0;
+      partTimeController.text = parTimeF.toString();
+      splitTime = prefs.getDouble('splitTimeB') ?? 0.0;
+      delayTimeMinF = prefs.getDouble('delayMinB') ?? 0.0;
+      delayTimeMaxF = prefs.getDouble('delayMaxB') ?? 0.5;
+      minNumOfCommands = prefs.getInt('numOfCMinB') ?? 1;
+      maxNumOfCommands = prefs.getInt('numOfCMaxB') ?? 1;
+      numOfRoundsF = prefs.getInt('numRoundsB') ?? 0;
+      numOfRounds = numOfRoundsF.toString();
+
+      redB = prefs.getBool('red-B') ?? false;
+      yellowB = prefs.getBool('yellow-B') ?? false;
+      blueB = prefs.getBool('blue-B') ?? false;
+      greenB = prefs.getBool('green-B') ?? false;
+      purpleB = prefs.getBool('purple-B') ?? false;
+      one = prefs.getBool('one-B') ?? false;
+      two = prefs.getBool('two-B') ?? false;
+      three = prefs.getBool('three-B') ?? false;
+      four = prefs.getBool('four-B') ?? false;
+      five = prefs.getBool('five-B') ?? false;
+      six = prefs.getBool('six-B') ?? false;
+      seven = prefs.getBool('seven-B') ?? false;
+      eight = prefs.getBool('eight-B') ?? false;
+      nine = prefs.getBool('nine-B') ?? false;
+      circle = prefs.getBool('circle-B') ?? false;
+      square = prefs.getBool('square-B') ?? false;
+      triangle = prefs.getBool('triangle-B') ?? false;
+    });
+  }
+
+  Future<void> removeData() async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('parTimeB', 0);
+    await prefs.setDouble('splitTimeB', 0.0);
+    await prefs.setDouble('delayMinB', 0);
+    await prefs.setDouble('delayMaxB', 0.5);
+    await prefs.setInt('numOfCMinB', 1);
+    await prefs.setInt('numOfCMaxB', 1);
+    await prefs.setInt('numRoundsB', 0);
+
+    await prefs.setBool('red-B', false);
+    await prefs.setBool('yellow-B', false);
+    await prefs.setBool('blue-B', false);
+    await prefs.setBool('green-B', false);
+    await prefs.setBool('purple-B', false);
+    await prefs.setBool('one-B', false);
+    await prefs.setBool('two-B', false);
+    await prefs.setBool('three-B', false);
+    await prefs.setBool('four-B', false);
+    await prefs.setBool('five-B', false);
+    await prefs.setBool('six-B', false);
+    await prefs.setBool('seven-B', false);
+    await prefs.setBool('eight-B', false);
+    await prefs.setBool('nine-B', false);
+    await prefs.setBool('circle-B', false);
+    await prefs.setBool('square-B', false);
+    await prefs.setBool('triangle-B', false);
+
+    fetchData();
+  }
+
+
+  Future<void> changeImage(String chosenSoundStr) async
+  {
+    if(chosenSoundStr == 'Blue.mp3')
+    {
+      imageLoc = 'assets/visuals/blue.jpg';
+    }
+    else if(chosenSoundStr == 'Eight.mp3')
+    {
+      imageLoc = 'assets/visuals/eight.jpg';
+    }
+    else if(chosenSoundStr == 'Five.mp3')
+    {
+      imageLoc = 'assets/visuals/five.jpg';
+    }
+    else if(chosenSoundStr == 'Four.mp3')
+    {
+      imageLoc = 'assets/visuals/four.jpg';
+    }
+    else if(chosenSoundStr == 'Green.mp3')
+    {
+      imageLoc = 'assets/visuals/green.jpg';
+    }
+    else if(chosenSoundStr == 'Nine.mp3')
+    {
+      imageLoc = 'assets/visuals/nine.jpg';
+    }
+    else if(chosenSoundStr == 'One.mp3')
+    {
+      imageLoc = 'assets/visuals/one.jpg';
+    }
+    else if(chosenSoundStr == 'Purple.mp3')
+    {
+      imageLoc = 'assets/visuals/purple.jpg';
+    }
+    else if(chosenSoundStr == 'Red.mp3')
+    {
+      imageLoc = 'assets/visuals/red.jpg';
+    }
+    else if(chosenSoundStr == 'Seven.mp3')
+    {
+      imageLoc = 'assets/visuals/seven.jpg';
+    }
+    else if(chosenSoundStr == 'Six.mp3')
+    {
+      imageLoc = 'assets/visuals/six.jpg';
+    }
+    else if(chosenSoundStr == 'Three.mp3')
+    {
+      imageLoc = 'assets/visuals/three.jpg';
+    }
+    else if(chosenSoundStr == 'Two.mp3')
+    {
+      imageLoc = 'assets/visuals/two.jpg';
+    }
+    else if(chosenSoundStr == 'Yellow.mp3')
+    {
+      imageLoc = 'assets/visuals/yellow.jpg';
+    }
+    else if(chosenSoundStr == 'Circle.mp3')
+    {
+      imageLoc = 'assets/visuals/circle.png';
+    }
+    else if(chosenSoundStr == 'Square.mp3')
+    {
+      imageLoc = 'assets/visuals/square.jpg';
+    }
+    else if(chosenSoundStr == 'Triangle.mp3')
+    {
+      imageLoc = 'assets/visuals/triangle.png';
+    }
   }
 
 
@@ -1391,7 +2562,7 @@ class _SecondProgramState extends State<SecondProgram>
 
       if(buttonTitle == "GO")
       {
-        numOfCommandsToUseInSet = numOfCommandsInSet;
+        numOfCommandsToUseInSet = randomNumOfCommands();
         _audioPlayer = AudioPlayer();
         buttonTitle = "-";
         startLogic();
@@ -1481,6 +2652,11 @@ class _SecondProgramState extends State<SecondProgram>
   }
 
 
+  int randomNumOfCommands()
+  {
+    return minNumOfCommands + random.nextInt((maxNumOfCommands+1)- minNumOfCommands);
+  }
+
   void startLogic()
   {
     delayTimeMinF = double.parse((delayTimeMinF).toStringAsFixed(1));
@@ -1510,7 +2686,7 @@ class _SecondProgramState extends State<SecondProgram>
       randomCommandIndex = random.nextInt((pickedSounds.length-1));
     }
     _audioPlayer.setAsset('assets/audio/'+ pickedSounds[randomCommandIndex]);
-
+    changeImage(pickedSounds[randomCommandIndex]);
     secondsDelay = minT + random.nextInt(maxT - minT);
 
     Future.delayed(Duration(milliseconds: secondsDelay), () 
@@ -1522,6 +2698,7 @@ class _SecondProgramState extends State<SecondProgram>
   
   void playSound() 
   {
+    Overlay.of(context)?.insert(_overlayEntry);
     _audioPlayer.play();
     numOfCommandsToUseInSet--;
     delay1();
@@ -1535,6 +2712,7 @@ class _SecondProgramState extends State<SecondProgram>
       _audioPlayer.dispose();
       _audioPlayer = AudioPlayer();
       _audioPlayer.setAsset('assets/audio/Beep.mp3');
+      _overlayEntry.remove();
       playBuzzer();
     });
   }
@@ -1567,7 +2745,7 @@ class _SecondProgramState extends State<SecondProgram>
             randomCommandIndex = random.nextInt((pickedSounds.length-1));
           }
           _audioPlayer.setAsset('assets/audio/'+ pickedSounds[randomCommandIndex]);
-
+          changeImage(pickedSounds[randomCommandIndex]);
           playSound();
 
         }
@@ -1588,7 +2766,7 @@ class _SecondProgramState extends State<SecondProgram>
 
   int calculateAT()
   {
-    totalAllowableTimeD = ((numOfRoundsF - 1.0) * splitTime) + partTimeController;
+    totalAllowableTimeD = ((numOfRoundsF.toDouble() - 1.0) * splitTime) + double.parse(partTimeController.text);
 
     return int.parse(totalAllowableTimeD.toStringAsFixed(2).replaceAll(".", "") + "0");
   }
@@ -1596,9 +2774,84 @@ class _SecondProgramState extends State<SecondProgram>
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    //_audioPlayer.dispose();
     super.dispose();
   }
+
+
+
+
+  Widget _incrementButton() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        splitTime += 0.05;
+        setState(() {
+          splitTime = double.parse((splitTime).toStringAsFixed(2));
+        });
+      },
+    );
+  }
+
+
+  Widget _decrementButton() {
+    return FloatingActionButton(
+        heroTag: null,
+        onPressed: () {
+          setState(() {
+            if(splitTime > 0)
+            {
+              splitTime -= 0.05;
+              splitTime = double.parse((splitTime).toStringAsFixed(2));
+            }
+          });
+        },
+        child: const Icon(Icons.remove, color: Colors.black),
+        backgroundColor: Colors.white);
+  }
+
+
+
+
+
+  Widget _incrementButtonParTime() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        parTimeF = double.parse(partTimeController.text);
+        parTimeF += 0.05;
+        parTimeF = double.parse((parTimeF).toStringAsFixed(2));
+        setState(() {
+          partTimeController.text = parTimeF.toString();
+        });
+      },
+    );
+  }
+
+
+  Widget _decrementButtonParTime() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        parTimeF = double.parse(partTimeController.text);
+        if(parTimeF > 0)
+        {
+          parTimeF -= 0.05;
+          parTimeF = double.parse((parTimeF).toStringAsFixed(2));
+        }
+        setState(() {
+          partTimeController.text = parTimeF.toString();
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
 
 
   Widget _incrementButtonDelayMin() {
@@ -1608,8 +2861,13 @@ class _SecondProgramState extends State<SecondProgram>
       backgroundColor: Colors.white,
       onPressed: () {
         delayTimeMinF += 0.25;
+        if((delayTimeMinF + 0.5) > delayTimeMaxF)
+        {
+          delayTimeMaxF = delayTimeMinF + 0.5;
+        }
         setState(() {
           delayTimeMinF = double.parse((delayTimeMinF).toStringAsFixed(2));
+          delayTimeMaxF = double.parse((delayTimeMaxF).toStringAsFixed(2));
         });
       },
     );
@@ -1617,18 +2875,18 @@ class _SecondProgramState extends State<SecondProgram>
 
   Widget _decrementButtonDelayMin() {
     return FloatingActionButton(
-        heroTag: null,
-        onPressed: () {
-          setState(() {
-            if(delayTimeMinF > 0)
-            {
-              delayTimeMinF -= 0.25;
-              delayTimeMinF = double.parse((delayTimeMinF).toStringAsFixed(2));
-            }
-          });
-        },
-        child: const Icon(Icons.remove, color: Colors.black),
-        backgroundColor: Colors.white);
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(delayTimeMinF > 0)
+          {
+            delayTimeMinF -= 0.25;
+            delayTimeMinF = double.parse((delayTimeMinF).toStringAsFixed(2));
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
   }
 
 
@@ -1648,13 +2906,50 @@ class _SecondProgramState extends State<SecondProgram>
 
   Widget _decrementButtonDelayMax() {
     return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if((delayTimeMaxF - 0.25) >= (delayTimeMinF + 0.5))
+          {
+            delayTimeMaxF -= 0.25;
+            delayTimeMaxF = double.parse((delayTimeMaxF).toStringAsFixed(2));
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+
+
+  Widget _incrementButtonNumRounds() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        setState(() {
+          if(numOfRoundsF < 4)
+          {
+            numOfRoundsF += 1;
+            numOfRounds = numOfRoundsF.toString();
+          }
+        });
+      },
+    );
+  }
+
+
+  Widget _decrementButtonNumRounds() {
+    return FloatingActionButton(
         heroTag: null,
         onPressed: () {
           setState(() {
-            if(delayTimeMaxF > 0.05)
+            if(numOfRoundsF > 1)
             {
-              delayTimeMaxF -= 0.25;
-              delayTimeMaxF = double.parse((delayTimeMaxF).toStringAsFixed(2));
+              numOfRoundsF -= 1;
+              numOfRounds = numOfRoundsF.toString();
             }
           });
         },
@@ -1663,9 +2958,89 @@ class _SecondProgramState extends State<SecondProgram>
   }
 
 
+    Widget _incrementButtonNumCommandsMin() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        setState(() {
+          if(minNumOfCommands < maxNumOfCommands)
+          {
+            minNumOfCommands += 1;
+          }
+        });
+      },
+    );
+  }
+
+  Widget _decrementButtonNumCommandsMin() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(minNumOfCommands > 1)
+          {
+            minNumOfCommands -= 1;
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+  Widget _incrementButtonNumCommandsMax() {
+    return FloatingActionButton(
+      heroTag: null,
+      child: const Icon(Icons.add, color: Colors.black87),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        setState(() {
+          maxNumOfCommands += 1;
+        });
+      },
+    );
+  }
+  
+
+  Widget _decrementButtonNumCommandsMax() {
+    return FloatingActionButton(
+      heroTag: null,
+      onPressed: () {
+        setState(() {
+          if(maxNumOfCommands > minNumOfCommands)
+          {
+            maxNumOfCommands -= 1;
+          }
+        });
+      },
+      child: const Icon(Icons.remove, color: Colors.black),
+      backgroundColor: Colors.white);
+  }
+
+
+
+  OverlayEntry _createOverlayEntry() {
+
+    return OverlayEntry(
+      builder: (context) => Positioned.fill(
+        //bottom: MediaQuery.of(context).size.height/2,
+        //start: (MediaQuery.of(context).size.width/2) - 10,
+        left: 5,
+        top: 5,
+        bottom: 5,
+        right: 5,
+        child: Image.asset(imageLoc),
+      )
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) 
   {
+    Wakelock.enable();
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -1687,11 +3062,13 @@ class _SecondProgramState extends State<SecondProgram>
                         child: const Text("Back",
                           style: TextStyle(fontSize: 15),
                         ),
-                        shape: const BeveledRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))
                         ),
                         onPressed: ()
                         {
+                          saveData();
+                          _audioPlayer.dispose();
                           Navigator.pop(context);
                         }
                       ), 
@@ -1714,191 +3091,389 @@ class _SecondProgramState extends State<SecondProgram>
                   ),
                 ),
               ),
+
+
+
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 30,
+                      width: 120,
+                      child: FloatingActionButton(
+                        heroTag: null,
+                        child: const Text("Reset Input Data",
+                          style: TextStyle(fontSize: 10, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))
+                        ),
+                        backgroundColor: Colors.blue,
+                        onPressed: ()
+                        {
+                          removeData();
+                        }
+                      ), 
+                    ),
+                  ]
+                )
+              ),
               
 
 
               Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 10, 0),
+                padding: const EdgeInsets.fromLTRB(0, 30.0, 10, 0),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
 
-                    const Flexible(
-                      child: Text("Par Time:"),
-                    ),
 
-                    Row(                           
-                        //mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            height: 43.0,
-                            width: 55.0,
-                            margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                            decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                            child:const Text(
-                              "1.5",
-                              style: TextStyle(fontSize: 18.0),
-                            )
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(15, 0, 0, 10),
+                      child: Row(                           
+                            children: <Widget>[
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text("Par Time:"),
+                                  
+                                  Container(
+                                    alignment: Alignment.center,
+                                    height: 43.0,
+                                    width: 55.0,
+                                    margin: const EdgeInsets.fromLTRB(14, 5, 15, 0),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:TextField(
+                                      textAlign: TextAlign.center,
+                                      textAlignVertical: TextAlignVertical.center,
+                                      controller: partTimeController,
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ]
+                              ),
+
+                              Column(
+                                children: <Widget> [
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonParTime(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonParTime(),
+                                  ),
+                                ]
+                              ),
+                              
+                            ],
                           ),
-                        ],
-                      ),
-
-
-
-                    const Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                        child:Text("Split Time:"),
-                      ),
-                    ),
-                    
-
-                    Row(                           
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                          decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child: const Text(
-                            "0.5",
-                            style: TextStyle(fontSize: 18.0),
-                          )
-                         ),
-                      ],
                     ),
 
-
-
-                  ],
-                ),
-              ),
-
-
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 2, 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Text("Delay"),
-                          Text("Time:"),
-                        ],
-                      )
-                    ),
-
-                        Container(
-                          width: 60.0,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child:Text(
-                            '$delayTimeMinF',
-                            style: const TextStyle(fontSize: 18.0),
-                          )
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-                          child:const Text(" (Min)",
-                            style: TextStyle(fontSize: 12.0),
-                          )
-                        ),
-                    
-                        Column(
-                          children: <Widget> [
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(bottom: 2.0),
-                              child: _incrementButtonDelayMin(),
-                            ),
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(top: 2.0),
-                              child: _decrementButtonDelayMin(),
-                            ),
-                          ]
-                        ),
-
-
-                        Container(
-                          width: 60.0,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(30, 0, 5, 0),
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                          child:Text(
-                            '$delayTimeMaxF',
-                            style: const TextStyle(fontSize: 18.0),
-                          )
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-                          child:const Text(" (Max)",
-                            style: TextStyle(fontSize: 12.0),
-                          )
-                        ),
-                    
-                        Column(
-                          children: <Widget> [
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(bottom: 2.0),
-                              child: _incrementButtonDelayMax(),
-                            ),
-
-                            Container(
-                              height: 35,
-                              width: 35,
-                              margin: const EdgeInsets.only(top: 2.0),
-                              child: _decrementButtonDelayMax(),
-                            ),
-                          ]
-                        ),
-
-
-                  ],
-                ),
-              ),
-
-
-
-              Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 40, 0),
-                child: Row(
-                  children: <Widget>[
-
-                    const Flexible(
-                      child: Text("Number of Commands(Per Set):"),
-                    ),
                     
 
                     Container(
-                      width: 55.0,
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
-                      padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: const Text(
-                        "1",
-                        style: TextStyle(fontSize: 18.0),
+                      margin: const EdgeInsets.fromLTRB(30, 0, 0, 10),
+                      child: Row(                           
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+
+                              Column(
+                                children: [
+                                  const Text("Split Time:"),
+
+                                  Container(
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                                    padding: const EdgeInsets.fromLTRB(15, 10, 20, 10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$splitTime',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ]
+                              ),
+
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButton(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButton(),
+                                  ),
+                                ]
+                              ),
+                            ],
+                          ),
+                    ),
+                    
+                  ],
+                ),
+              ),
+
+
+              Container(
+                margin: const EdgeInsets.fromLTRB(30, 30, 0, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Container(
+                      padding: const EdgeInsets.only(left: 74),
+                      child: const Text("Delay Time:"),
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+
+
+                            Column(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                  child:const Text(" (Min)",
+                                    style: TextStyle(fontSize: 12.0),
+                                  )
+                                ),
+
+                                Container(
+                                  width: 60.0,
+                                  alignment: Alignment.center,
+                                  margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                  child:Text(
+                                    '$delayTimeMinF',
+                                    style: const TextStyle(fontSize: 18.0),
+                                  )
+                                ),
+
+                              ],
+                            ),
+
+
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonDelayMin(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonDelayMin(),
+                                  ),
+                                ]
+                              ),
+
+
+                              Column(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(24, 0, 5, 0),
+                                    child:const Text(" (Max)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(30, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$delayTimeMaxF',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonDelayMax(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonDelayMax(),
+                                  ),
+                                ]
+                              ),
+                        ],
+                      ),
+                    ),
+
+                  ]
+                ),
+              ),
+
+              
+
+
+
+              Container(
+                margin: const EdgeInsets.fromLTRB(30, 30, 0, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    Container(
+                      padding: const EdgeInsets.only(left: 38),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const[
+                          Text("Number of Commands"),
+                          Text("(Per Set)"),
+                        ],
                       )
                     ),
-                  ],
+
+                    Container(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                    child:const Text(" (Min)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$minNumOfCommands',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+
+
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonNumCommandsMin(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonNumCommandsMin(),
+                                  ),
+                                ]
+                              ),
+
+
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(23, 0, 5, 0),
+                                    child:const Text(" (Max)",
+                                      style: TextStyle(fontSize: 12.0),
+                                    )
+                                  ),
+
+                                  Container(
+                                    width: 60.0,
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(30, 5, 5, 0),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
+                                    child:Text(
+                                      '$maxNumOfCommands',
+                                      style: const TextStyle(fontSize: 18.0),
+                                    )
+                                  ),
+                                ],
+                              ),
+
+                          
+                              Column(
+                                children: <Widget> [
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(bottom: 2.0),
+                                    child: _incrementButtonNumCommandsMax(),
+                                  ),
+
+                                  Container(
+                                    height: 35,
+                                    width: 35,
+                                    margin: const EdgeInsets.only(top: 2.0),
+                                    child: _decrementButtonNumCommandsMax(),
+                                  ),
+                                ]
+                              ),
+
+
+                        ],
+                      ),
+                    ),
+
+
+                  ]
                 ),
               ),
 
@@ -1906,7 +3481,7 @@ class _SecondProgramState extends State<SecondProgram>
 
 
               Container(
-                padding: const EdgeInsets.fromLTRB(10, 30.0, 40, 0),
+                padding: const EdgeInsets.fromLTRB(30, 30.0, 40, 0),
                 child: Row(
                   children: <Widget>[
 
@@ -1921,11 +3496,30 @@ class _SecondProgramState extends State<SecondProgram>
                       margin: const EdgeInsets.fromLTRB(5, 0, 15, 0),
                       padding: const EdgeInsets.all(10),
                       decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: const Text(
-                        "1",
-                        style: TextStyle(fontSize: 18.0),
+                      child:Text(
+                        numOfRounds,
+                        style: const TextStyle(fontSize: 18.0),
                       )
                     ),
+
+                    Column(
+                      children: <Widget> [
+                        Container(
+                          height: 35,
+                          width: 35,
+                          margin: const EdgeInsets.only(bottom: 2.0),
+                          child: _incrementButtonNumRounds(),
+                        ),
+
+                        Container(
+                          height: 35,
+                          width: 35,
+                          margin: const EdgeInsets.only(top: 2.0),
+                          child: _decrementButtonNumRounds(),
+                        ),
+                      ]
+                    ),
+
                   ],
                 ),
               ),
@@ -1954,14 +3548,11 @@ class _SecondProgramState extends State<SecondProgram>
                               value: redB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  redB = redB;
+                                  redB = !redB;
                                 });
                               },
                             ),
-                            const Text("Red",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Red")
                           ],),
 
                         Row(
@@ -1970,14 +3561,11 @@ class _SecondProgramState extends State<SecondProgram>
                               value: yellowB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  yellowB = yellowB;
+                                  yellowB = !yellowB;
                                 });
                               },
                             ),
-                            const Text("Yellow",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Yellow")
                           ],),
 
                         Row(
@@ -1986,14 +3574,11 @@ class _SecondProgramState extends State<SecondProgram>
                               value: blueB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  blueB = blueB;
+                                  blueB = !blueB;
                                 });
                               },
                             ),
-                            const Text("Blue",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Blue")
                           ],),
 
                         Row(
@@ -2002,14 +3587,11 @@ class _SecondProgramState extends State<SecondProgram>
                               value: greenB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  greenB = greenB;
+                                  greenB = !greenB;
                                 });
                               },
                             ),
-                            const Text("Green",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Green")
                           ],),
 
                         Row(
@@ -2018,14 +3600,11 @@ class _SecondProgramState extends State<SecondProgram>
                               value: purpleB, 
                               onChanged: (bool? value) {
                                 setState(() {
-                                  purpleB = purpleB;
+                                  purpleB = !purpleB;
                                 });
                               },
                             ),
-                            const Text("Purple",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                            const Text("Purple")
                           ],),
                         
                       ]
@@ -2044,14 +3623,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: one, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    one = one;
+                                    one = !one;
                                   });
                                 },
                               ),
-                              const Text("1",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("1")
                             ],)
                         ),
 
@@ -2063,14 +3639,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: two, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    two = two;
+                                    two = !two;
                                   });
                                 },
                               ),
-                              const Text("2",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("2")
                             ],)
                         ),
 
@@ -2082,14 +3655,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: three, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    three = three;
+                                    three = !three;
                                   });
                                 },
                               ),
-                              const Text("3",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("3")
                             ],)
                         ),
 
@@ -2101,14 +3671,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: four, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    four = four;
+                                    four = !four;
                                   });
                                 },
                               ),
-                              const Text("4",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("4")
                             ],)
                         ),
 
@@ -2120,14 +3687,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: five, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    five = five;
+                                    five = !five;
                                   });
                                 },
                               ),
-                              const Text("5",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("5")
                             ],)
                         ),
                         
@@ -2146,14 +3710,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: six, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    six = six;
+                                    six = !six;
                                   });
                                 },
                               ),
-                              const Text("6",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("6")
                             ],)
                         ),
 
@@ -2165,14 +3726,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: seven, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    seven = seven;
+                                    seven = !seven;
                                   });
                                 },
                               ),
-                              const Text("7",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("7")
                             ],)
                         ),
 
@@ -2184,14 +3742,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: eight, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    eight = eight;
+                                    eight = !eight;
                                   });
                                 },
                               ),
-                              const Text("8",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("8")
                             ],)
                         ),
 
@@ -2203,14 +3758,11 @@ class _SecondProgramState extends State<SecondProgram>
                                 value: nine, 
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    nine = nine;
+                                    nine = !nine;
                                   });
                                 },
                               ),
-                              const Text("9",
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),)
+                              const Text("9")
                             ],)
                         ),
 
@@ -2285,6 +3837,7 @@ class _SecondProgramState extends State<SecondProgram>
                   onPressed: (() {
                     if(delayTimeMinF != delayTimeMaxF)
                     {
+                      saveData();
                       start();
                     }
                   }),
